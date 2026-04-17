@@ -1,0 +1,283 @@
+###########################################################
+## This configuration file uses the YAML format (https://yaml.org/)
+## to describe the data sources, parameters and metadata used to
+## analyse and generate urban indicator resources using the Global
+## Healthy and Sustainable City Indicators software
+## (https://healthysustainablecities.github.io/global-indicators/).
+###########################################################
+---
+name: Mexicali
+country: México
+country_code: MX
+continent: Oceania
+year: 2025
+crs:
+  name: Mexico ITRF2008 / UTM zone 11N
+  standard: EPSG
+  srid: 6366
+study_region_boundary:
+  data: MX/INEGI/02_bajacalifornia.zip/conjunto_de_datos/O2l.shp -where  "NOMGEO='Mexicali'"
+  source: Instituto Nacional de Estadística, Geografía e Informática 
+  publication_date: 2025-07-31
+  url: https://en.www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/geografia/marcogeo/794551163061/02_bajacalifornia.zip
+  licence: Términos de Libre Uso de la Información del INEGI https://www.inegi.org.mx/inegi/terminos.html
+  urban_intersection: false
+  citation: "INEGI (2025). Marco Geoestadístico 2025 - Baja California.  https://en.www.inegi.org.mx/app/biblioteca/ficha.html?upc=794551163061."
+exclusion_region:
+  data:
+  source:
+  licence:
+  citation: 
+  notes: Es necesario tener cuidado para garantizar que la zona de estudio delimitada no se extienda más allá de la frontera con Estados Unidos, a fin de evitar incluir la red vial o los servicios fuera de México en los cálculos de accesibilidad // Care must be taken to ensure the buffered study region does not expand across the border with the United States to ensure we do not include road network or amenities outside Mexico in accessibility calculations.  ** Software update required: https://github.com/healthysustainablecities/global-indicators/issues/610 **
+population:
+  name: "Principales resultados por AGEB y manzana urbana 2020 (INEGI, 2026)"
+  data_dir: MX/INEGI/mexicali_poblacion_derivada_2020.geojson
+  data_type: vector
+  resolution: AGEB
+  vector_population_data_field: POBTOT
+  population_denominator: POBTOT
+  pop_min_threshold: 1
+  crs_name: Mexico ITRF2008 / LCC
+  crs_standard: EPSG
+  crs_srid: 6372
+  source_url: https://www.inegi.org.mx/contenidos/programas/ccpv/iter/zip/resageburb20/resageburb_02csv20.zip
+  year_published: 2026
+  year_target: 2020
+  date_acquired: 20260416
+  licence: CC BY 4.0
+  citation:  "INEGI (2026). Principales resultados por AGEB y manzana urbana 2020. https://www.inegi.org.mx/contenidos/programas/ccpv/iter/zip/resageburb20/resageburb_02csv20.zip."
+  notes:  | 
+    Spatial data containing AGEB population estimates were derived using official INEGI data.  CSV population estimates were joined to 02a.shp restricted to Mexicali using a query ("CVE_LOC"='0001' AND "CVE_MUN"='002') using the AGEB identified.  The linked spatial data for Mexicali were then exported as a geojson.  The AGEB geometries are contained in the same spatial download as used for the study region boundary (https://en.www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/geografia/marcogeo/794551163061/02_bajacalifornia.zip).  The spatial data are stored as "conjunto_de_datos/02a.shp".
+    BUT
+    The population data are finer grained -- for manzanas (blocks; n=13,611); better would be to find the finer grained spatial data representing these.  For now, I will aggregate the blocks to AGEB (n=436).
+    
+    ... maybe use virtual table in qgis? 
+    
+OpenStreetMap:
+  data_dir: MX/mexico-260409.osm.pbf
+  source: Geofabrik GmbH
+  publication_date: 20260410
+  licence: ODbL
+  url: https://download.geofabrik.de/north-america/mexico-latest.osm.pbf
+  note: Mexico OpenStreetMap excerpt
+network:
+  #########
+  ## Optional network parameters for use in some contexts (eg. island cities)
+  ## Whether to only retain main connected network when retrieving OSM roads.
+  ## For most settings, set to "false" (the default, used if commented out).
+  ## To retain network 'islands' if present, set to "true".
+  osmnx_retain_all: true
+  ## Whether to extract the network for the buffered study region.
+  ## It is recommended to set to 'true' (the default) in most cases.
+  ## However, for border cities like Mexicali we want to restrict 
+  ## accessiblity analysis to within the country of Mexico.  
+  ## This is the most straightforward way to ensure this is achieved.
+  buffered_region: false
+  #########
+  ## Optionally, data for evaluating intersections can be provided as an
+  ## alternative to deriving intersections from OpenStreetMap.
+  ## Where such data are available, this may be preferable.
+  ## Uncomment and complete the below required fields to use this option.
+  ## Custom intersection data settings
+  intersections:
+    ## path to data relative to the project data directory
+    data: MX/INEGI/Red Nacional de Caminos-RNC-2025/conjunto_de_datos/rnc2025.gpkg:union_p
+    ## citation for optional custom intersection data
+    citation: 'INEGI. 2025. Red Nacional de Caminos. RNC. 2025. https://en.www.inegi.org.mx/app/biblioteca/ficha.html?upc=794551163030'
+    ## a note to describe custom intersection data
+    note: "Clean intersection locations from Mexico's official road infrastructure data, last updated 2025.  Manually verified using QGIS."
+country_gdp:
+  classification: Upper middle income
+  # citation: "The World Bank. 2026. World Bank country and lending groups: Current classification by income in XLSX format. https://ddh-openapi.worldbank.org/resources/DR0095333/download"
+# GTFS data has not been sourced for Mexicali as of 16 April 2026; may not be available
+gtfs_feeds:
+  # folder: 
+  # # Regional Train
+  # 1/google_transit.zip:
+    # gtfs_provider: 
+    # gtfs_year: 
+    # gtfs_url: 
+    # start_date_mmdd: 
+    # end_date_mmdd: 
+    # interpolate_stop_times: 
+#########
+## Optional Google Earth Engine indicator configuration
+## Set 'gee' below to true to compute and generate the below indicators, or set false to skip
+## 1. Large Public Urban Green Space (LPUGS) accessibility and availability
+## 2. Global Urban Heat Vulnerability Index (GUHVI)
+gee: false
+policy_review: 
+#########
+## Reporting configuration
+reporting:
+  ## PDF report templates (note: policy checklist has not been completed for the Wellington example)
+  templates:
+    - policy_spatial
+    - spatial
+    - policy
+  publication_ready: true
+  study_region_context_basemap: 'satellite'
+  custom_text_box_fontsize : 11
+  ## Once ready for publication it is recommended to register a DOI for your
+  ## report, e.g. through figshare, zenodo or other repository.  For example,
+  ## "https://doi.org/10.25439/rmt.c.6012649"
+  doi: ""
+  # images:
+    # 1:
+      # # (.jpg, 2100px by 1000px; or equivalent 21:10 aspect ratio)
+      # file:
+      # description:
+      # credit:
+    # 2:
+      # # (.jpg, 2100px by 1000px; or equivalent 21:10 aspect ratio)
+      # file:
+      # description:
+      # credit:
+    # 3:
+      # # (.jpg, 1000px by 1000px; or equivalent 1:1 aspect ratio)
+      # file:
+      # description:
+      # credit:
+    # 4:
+      # # (.jpg, 1000px by 1000px; or equivalent 1:1 aspect ratio)
+      # file:
+      # description:
+      # credit:
+  ## Languages configuration
+  languages:
+    ## Add a list of languages as required.
+    ## Languages listed should correspond to columns in the 'languages' worksheet
+    ## of the file process/configuration/_report_configuration.xlsx.
+    ## If the software has not yet been used, the template for this file is
+    ## located in the 'templates' subdirectory.
+    ## Supported languages can also be viewed by running the python command
+    ## ghsci.get_languages().
+    ## New languages can be added, although some may require additional fonts.
+    ## Some languages may not yet be supported (eg. complex scripts like Tamil
+    ## and Thai may not be supported by the report template and require manual
+    ## edits, and right-to-left layouts may not yet be correctly represented).
+    Spanish - Mexican:
+      name: "Mexicali"
+      country: "Mexico"
+      ## After reviewing the policy and/or spatial indicator results, update
+      ## the text of the following summary records to contextualise your findings,
+      ## and relate to external text and documents (e.g. using website hyperlinks).
+      ## This text will be used in the respective report summaries.
+      summary_policy: ""
+      summary_spatial: ""
+      summary_policy_spatial: ""
+      context:
+        - City context:
+            - summary: ""
+            - source: ""
+        - Demographics and health equity:
+            - summary: ""
+            - source: ""
+        - Environmental disaster context:
+            - summary: ""
+            - source: ""
+        - Levels of government:
+            - summary: ""
+            - source: ""
+        - Additional context:
+            - summary: ""
+            - source: ""
+    English:
+      name: "Mexicali"
+      country: "México"
+      ## After reviewing the policy and/or spatial indicator results, update
+      ## the text of the following summary records to contextualise your findings,
+      ## and relate to external text and documents (e.g. using website hyperlinks).
+      ## This text will be used in the respective report summaries.
+      summary_policy: |
+        After reviewing policy indicator results for your city, provide a contextualised summary by modifying the "summary_policy" text for each configured language within the region configuration file.
+      summary_spatial: |
+        After reviewing spatial indicator results for your city, provide a contextualised summary by modifying the "summary_spatial" text for each configured language within the region configuration file.
+      summary_policy_spatial: |
+        After reviewing both the policy and spatial indicator results for your city, provide a contextualised summary by modifying the "summary_policy_spatial" text for each configured language within the region configuration file.
+      ## Contextual summary for study region spatial report.  Users may choose to
+      ## translate these entries (following the hyphen) for languages configured
+      ## for their city.  Remember, if you put a colon (":") in, put quotes
+      ## around the text to make it explicitly understood as text.
+      context:
+        ## A brief summary of region characteristics
+        - City context:
+            ## Contextual information about your study region. Please briefly
+            ## summarise the city location, history and topography, as relevant.
+            - summary: ""
+            - source: ""
+        - Demographics and health equity:
+            ## For example, highlight socio-economic demographic characteristics
+            ## and key health challenges and inequities present in this urban area.
+            - summary: ""
+            - source: ""
+        - Environmental disaster context:
+            ## For example, environmental hazards likely to be experience by the
+            ## urban area over the next 5-10 years, may include [insert those
+            ## listed as ‘yes’ in the policy checklist].  Completed policy
+            ## checklist values will be added, but prose may be customised here.
+            - summary: ""
+            - source: "Add any citations used here."
+        - Levels of government:
+            ## For example, for this report, policies from [insert levels of government from policy checklist,  e.g. national, metropolitan, local] levels of government were analysed. Completed policy checklist values will be added, but prose may be customised here.
+            - summary: ""
+            - source: "Add any citations used here."
+        - Additional context:
+            ## The 'Additional context' section is only included in spatial reports, and only if
+            ## information is added in the 'summary' section below.  Detail any other
+            ## considerations relating to urban health inequities and geography in
+            ## this city, or data considerations that could influence interpretation
+            ## of findings.
+            - summary: ""
+            - source: "Add any citations used here."
+  ## Optionally, exceptions to the template can be specified here, this can be
+  ## useful for additional translation customisation without modifying the
+  ## report_configuration.xlsx file.  These phrases can incorporate translated
+  ## phrases defined in report configuration, by enclosing these in curly braces,
+  ## e.g. like {this}, if 'this' has been defined as a phrase in the relevant
+  ## language.  See the example region for a demonstration of how this can be
+  ## used.  Sections from the example can be pasted here and modified as
+  ## required, or the below example can be uncommented.
+  # exceptions:
+    # "English":
+      # 'author_names': ''
+  #########
+  # Optional scorecard context statistics
+  optional_scorecard_context_statistics:
+    ## The scorecard is an optional summary of the policy and spatial indicator results.
+    ## It is prepared by a graphic designer using an additional selection of contextual
+    ## information and indicator results, which a research can provide to the GOHSC team.
+    ## To specify values for these fields, uncomment and complete the required fields for each.
+    ## For values, please only use numbers and decimal points; do not use commas or other punctuation.
+    ## For more information, contact the GOHSC team at info@healthysustainablecities.org
+    Gini:
+      # Country Gini Index as an estimate of income inequality
+      value: 42.6
+      year: 2024
+      source: https://data.worldbank.org/indicator/SI.POV.GINI
+      note:
+    HDI:
+      # Country Human Development Index (HDI)
+      value: 0.789
+      year: 2023
+      source: https://hdr.undp.org/data-center/human-development-index#/indicies/HDI
+    GDP per capita:
+      # City Gross Domestic Product (GDP) per capita as an estimate of economic development (international dollar $)
+      value: 19,173
+      year: 2024
+      source: https://en.wikipedia.org/wiki/List_of_Mexican_states_by_GDP
+    ## The following data may be optionally uncommented and provided by users using official data.
+    ## This may be preferable to using derived estimates.
+    City area (km²):
+      # Total study region or city area in square kilometres (km²)
+      # The city boundary is the release for 2021-2026, effectively a mid-point for comparison between a 2016 and 2026 analysis
+      # Officially, this boundary is the current one until June 2026 when the next release of official boundaries (2026-2031) will be made
+      value: 209
+      year: 2025
+      source: https://en.www.inegi.org.mx/app/biblioteca/ficha.html?upc=794551163061
+    City population:
+      # Total study region or city population
+      # Sum of "POBTOT" after filtering using NOM_LOC='Mexicali'
+      value: 854,186
+      year: 2020
+      source: https://www.inegi.org.mx/contenidos/programas/ccpv/iter/zip/resageburb20/resageburb_02csv20.zip
