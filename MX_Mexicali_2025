@@ -9,7 +9,7 @@
 name: Mexicali
 country: México
 country_code: MX
-continent: Oceania
+continent: North America
 year: 2025
 crs:
   name: Mexico ITRF2008 / UTM zone 11N
@@ -23,12 +23,6 @@ study_region_boundary:
   licence: Términos de Libre Uso de la Información del INEGI https://www.inegi.org.mx/inegi/terminos.html
   urban_intersection: false
   citation: "INEGI (2025). Marco Geoestadístico 2025 - Baja California.  https://en.www.inegi.org.mx/app/biblioteca/ficha.html?upc=794551163061."
-exclusion_region:
-  data:
-  source:
-  licence:
-  citation: 
-  notes: Es necesario tener cuidado para garantizar que la zona de estudio delimitada no se extienda más allá de la frontera con Estados Unidos, a fin de evitar incluir la red vial o los servicios fuera de México en los cálculos de accesibilidad // Care must be taken to ensure the buffered study region does not expand across the border with the United States to ensure we do not include road network or amenities outside Mexico in accessibility calculations.  ** Software update required: https://github.com/healthysustainablecities/global-indicators/issues/610 **
 population:
   name: "Principales resultados por AGEB y manzana urbana 2020 (INEGI, 2026)"
   data_dir: MX/INEGI/mexicali_poblacion_derivada_2020.geojson
