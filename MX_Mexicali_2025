@@ -46,7 +46,25 @@ population:
   date_acquired: 20260416
   licence: CC BY 4.0
   citation:  "INEGI (2026). Principales resultados por AGEB y manzana urbana 2020. https://www.inegi.org.mx/contenidos/programas/ccpv/iter/zip/resageburb20/resageburb_02csv20.zip."
-  notes:  Spatial data containing manzana (MZA) population estimates were joined to MZA geometries using official INEGI data, linking on AGEB and MZA (manzana) as detailed in Mexicali_2025.ipynb.
+  notes:  Spatial data containing AGEB population estimates were joined to AGEB geometries using official INEGI data.  After filtering to restrict to results for Mexicali, MZA population estimates were aggregated to AGEB areas and then linked to geometries before exporting as a geojson, as detailed in Mexicali_2025.ipynb. 
+custom_aggregations:
+  school_districts_grid_pop:
+    ## path to data relative to project data folder
+    data: "MX/mexicali_manzanas_population.geojson"
+    ## The field used as a unique identifier
+    id: 'MZA'
+    ## A list of column field names to be retained
+    keep_columns: POBTOT, MZA
+    ## The indicator layer to be aggregated ("point" or "grid")
+    ## Aggregation is based on the average of intersecting results
+    ## unless the agg_distance parameter is defined (see alternative example below)
+    aggregation_source: point
+    aggregate_within_distance: 30
+    ## The variable used for weighting.
+    ## Enter 'pop_est' to use the population grid.
+    ## Leave blank or "false" if using sample points.
+    weight: POBTOT
+    notes:  Spatial data containing manzana (MZA) population estimates were joined to MZA geometries using official INEGI data, linking on AGEB and MZA (manzana) as detailed in Mexicali_2025.ipynb.  It is also worth noting that Manzanas are too fine-grained to aggregate meaningfully based on sample points alone; we need to use the 'aggregate_within_distance' argument from custom_aggregations.
 OpenStreetMap:
   data_dir: MX/mexico-260409.osm.pbf
   source: Geofabrik GmbH
@@ -90,9 +108,7 @@ policy_review:
 reporting:
   ## PDF report templates (note: policy checklist has not been completed for the Wellington example)
   templates:
-    - policy_spatial
     - spatial
-    - policy
   publication_ready: true
   study_region_context_basemap: 'satellite'
   custom_text_box_fontsize : 11
