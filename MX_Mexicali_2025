@@ -30,10 +30,10 @@ exclusion_region:
   citation: 
   notes: Es necesario tener cuidado para garantizar que la zona de estudio delimitada no se extienda más allá de la frontera con Estados Unidos, a fin de evitar incluir la red vial o los servicios fuera de México en los cálculos de accesibilidad // Care must be taken to ensure the buffered study region does not expand across the border with the United States to ensure we do not include road network or amenities outside Mexico in accessibility calculations.  As per https://github.com/healthysustainablecities/global-indicators/issues/610, we have configured the network setup to be restricted to the main study region (not buffered region).
 population:
-  name: "Principales resultados por manzana urbana 2020 (INEGI, 2026)"
-  data_dir: MX/mexicali_manzanas_population.geojson
+  name: "Mexicali AGEB"
+  data_dir: MX/mexicali_AGEB_population.geojson
   data_type: vector
-  resolution: MZA
+  resolution: AGEB
   vector_population_data_field: POBTOT
   population_denominator: POBTOT
   pop_min_threshold: 1
