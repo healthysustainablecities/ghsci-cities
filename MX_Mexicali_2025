@@ -16,37 +16,37 @@ crs:
   standard: EPSG
   srid: 6366
 study_region_boundary:
-  data: MX/INEGI/02_bajacalifornia.zip/conjunto_de_datos/O2l.shp -where  "NOMGEO='Mexicali'"
+  data: MX/INEGI/02_bajacalifornia.zip/conjunto_de_datos/02l.shp -where  "NOMGEO='Mexicali'"
   source: Instituto Nacional de Estadística, Geografía e Informática 
   publication_date: 2025-07-31
   url: https://en.www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/geografia/marcogeo/794551163061/02_bajacalifornia.zip
   licence: Términos de Libre Uso de la Información del INEGI https://www.inegi.org.mx/inegi/terminos.html
   urban_intersection: false
   citation: "INEGI (2025). Marco Geoestadístico 2025 - Baja California.  https://en.www.inegi.org.mx/app/biblioteca/ficha.html?upc=794551163061."
+exclusion_region:
+  data:
+  source:
+  licence:
+  citation: 
+  notes: Es necesario tener cuidado para garantizar que la zona de estudio delimitada no se extienda más allá de la frontera con Estados Unidos, a fin de evitar incluir la red vial o los servicios fuera de México en los cálculos de accesibilidad // Care must be taken to ensure the buffered study region does not expand across the border with the United States to ensure we do not include road network or amenities outside Mexico in accessibility calculations.  As per https://github.com/healthysustainablecities/global-indicators/issues/610, we have configured the network setup to be restricted to the main study region (not buffered region).
 population:
-  name: "Principales resultados por AGEB y manzana urbana 2020 (INEGI, 2026)"
-  data_dir: MX/INEGI/mexicali_poblacion_derivada_2020.geojson
+  name: "Principales resultados por manzana urbana 2020 (INEGI, 2026)"
+  data_dir: MX/mexicali_manzanas_population.geojson
   data_type: vector
-  resolution: AGEB
+  resolution: MZA
   vector_population_data_field: POBTOT
   population_denominator: POBTOT
   pop_min_threshold: 1
-  crs_name: Mexico ITRF2008 / LCC
+  crs_name: Mexico ITRF2008 / UTM zone 11N
   crs_standard: EPSG
-  crs_srid: 6372
+  crs_srid: 6366
   source_url: https://www.inegi.org.mx/contenidos/programas/ccpv/iter/zip/resageburb20/resageburb_02csv20.zip
   year_published: 2026
   year_target: 2020
   date_acquired: 20260416
   licence: CC BY 4.0
   citation:  "INEGI (2026). Principales resultados por AGEB y manzana urbana 2020. https://www.inegi.org.mx/contenidos/programas/ccpv/iter/zip/resageburb20/resageburb_02csv20.zip."
-  notes:  | 
-    Spatial data containing AGEB population estimates were derived using official INEGI data.  CSV population estimates were joined to 02a.shp restricted to Mexicali using a query ("CVE_LOC"='0001' AND "CVE_MUN"='002') using the AGEB identified.  The linked spatial data for Mexicali were then exported as a geojson.  The AGEB geometries are contained in the same spatial download as used for the study region boundary (https://en.www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/geografia/marcogeo/794551163061/02_bajacalifornia.zip).  The spatial data are stored as "conjunto_de_datos/02a.shp".
-    BUT
-    The population data are finer grained -- for manzanas (blocks; n=13,611); better would be to find the finer grained spatial data representing these.  For now, I will aggregate the blocks to AGEB (n=436).
-    
-    ... maybe use virtual table in qgis? 
-    
+  notes:  Spatial data containing manzana (MZA) population estimates were joined to MZA geometries using official INEGI data, linking on AGEB and MZA (manzana) as detailed in Mexicali_2025.ipynb.
 OpenStreetMap:
   data_dir: MX/mexico-260409.osm.pbf
   source: Geofabrik GmbH
@@ -55,34 +55,18 @@ OpenStreetMap:
   url: https://download.geofabrik.de/north-america/mexico-latest.osm.pbf
   note: Mexico OpenStreetMap excerpt
 network:
-  #########
-  ## Optional network parameters for use in some contexts (eg. island cities)
-  ## Whether to only retain main connected network when retrieving OSM roads.
-  ## For most settings, set to "false" (the default, used if commented out).
-  ## To retain network 'islands' if present, set to "true".
+  ## NOTE: We want to retain gated communities in Mexicali, so we set this to true
   osmnx_retain_all: true
-  ## Whether to extract the network for the buffered study region.
-  ## It is recommended to set to 'true' (the default) in most cases.
-  ## However, for border cities like Mexicali we want to restrict 
-  ## accessiblity analysis to within the country of Mexico.  
-  ## This is the most straightforward way to ensure this is achieved.
+  ## Buffered region is not used for network extraction to ensure access is not inadvertently evaluated across the US border
   buffered_region: false
-  #########
-  ## Optionally, data for evaluating intersections can be provided as an
-  ## alternative to deriving intersections from OpenStreetMap.
-  ## Where such data are available, this may be preferable.
-  ## Uncomment and complete the below required fields to use this option.
   ## Custom intersection data settings
   intersections:
-    ## path to data relative to the project data directory
     data: MX/INEGI/Red Nacional de Caminos-RNC-2025/conjunto_de_datos/rnc2025.gpkg:union_p
-    ## citation for optional custom intersection data
     citation: 'INEGI. 2025. Red Nacional de Caminos. RNC. 2025. https://en.www.inegi.org.mx/app/biblioteca/ficha.html?upc=794551163030'
-    ## a note to describe custom intersection data
     note: "Clean intersection locations from Mexico's official road infrastructure data, last updated 2025.  Manually verified using QGIS."
 country_gdp:
   classification: Upper middle income
-  # citation: "The World Bank. 2026. World Bank country and lending groups: Current classification by income in XLSX format. https://ddh-openapi.worldbank.org/resources/DR0095333/download"
+  citation: "The World Bank. 2026. World Bank country and lending groups: Current classification by income in XLSX format. https://ddh-openapi.worldbank.org/resources/DR0095333/download"
 # GTFS data has not been sourced for Mexicali as of 16 April 2026; may not be available
 gtfs_feeds:
   # folder: 
@@ -257,7 +241,7 @@ reporting:
       source: https://hdr.undp.org/data-center/human-development-index#/indicies/HDI
     GDP per capita:
       # City Gross Domestic Product (GDP) per capita as an estimate of economic development (international dollar $)
-      value: 19,173
+      value: 19173
       year: 2024
       source: https://en.wikipedia.org/wiki/List_of_Mexican_states_by_GDP
     ## The following data may be optionally uncommented and provided by users using official data.
@@ -272,6 +256,6 @@ reporting:
     City population:
       # Total study region or city population
       # Sum of "POBTOT" after filtering using NOM_LOC='Mexicali'
-      value: 854,186
+      value: 854186
       year: 2020
       source: https://www.inegi.org.mx/contenidos/programas/ccpv/iter/zip/resageburb20/resageburb_02csv20.zip
