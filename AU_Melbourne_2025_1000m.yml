@@ -279,9 +279,9 @@ reporting:
   exceptions:
     "English":
       'authors': 'City team members: Carl Higgs, Sonja Broersen, Ryan Turner and Melanie Lowe'
-      'policy_authors': 'Broersen S, Higgs C and Lowe M'
-      'spatial_ee_authors': 'Higgs C, Turner R and Lowe M'
-      'policy_spatial_ee_authors': 'Higgs C, Broersen S, Turner R and Lowe M'
+      'policy_authors': 'Broersen, S., Higgs, C. and Lowe, M.'
+      'spatial_ee_authors': 'Higgs, C., Turner, R. and Lowe, M.'
+      'policy_spatial_ee_authors': 'Higgs, C., Broersen, S., Turner, R. and Lowe, M.
   #########
   # Optional scorecard context statistics
   optional_scorecard_context_statistics:
