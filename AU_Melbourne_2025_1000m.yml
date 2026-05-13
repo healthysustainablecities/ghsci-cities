@@ -1,0 +1,326 @@
+###########################################################
+## Example configuration for Las Palmas de Gran Canaria,
+## Spain using Study region configuration template v4.2.3
+## (23 December 2024)
+##
+## This configuration file uses the YAML format (https://yaml.org/)
+## to describe the data sources, parameters and metadata used to
+## analyse and generate urban indicator resources using the Global
+## Healthy and Sustainable City Indicators software
+## (https://global-healthy-liveable-cities.github.io/).
+##
+## Text beginning with a double hash symbol ("##") are comments
+## (used to provide descriptions of how to complete the item
+## immediately below). Text beginning with a single hash symbol
+## ("#") are commented out sections of code that may optionally be
+## uncommented as per the provided instructions.
+##
+## Optional sections that contain parameters which may be
+## uncommented are marked with a series of hash symbols ("###########")
+## at their start and end lines.
+##
+## It is recommended to view or edit this file in an application
+## providing syntax highlighting, for example, the provided Jupyter
+## Lab web app:
+## - type 'lab' at the GHSCI prompt
+## - navigate the file browser to "process/configuration/region/"
+## - double click on a region configuration file ending in ".yml"
+##
+## YAML configuration checking tools may be run however, some rules
+## are ignored in order to provide detailed comment advice.
+## The following are settings to support automated YAML checks to work
+# yamllint disable rule:line-length
+###########################################################
+---
+name: Melbourne
+country: Australia
+country_code: AU
+continent: Oceania
+year: 2025
+crs:
+  name: GDA2020 / Vicgrid
+  standard: EPSG
+  srid: 7899
+study_region_boundary:
+  data: AU/GCCSA_2021_AUST_SHP_GDA2020.zip -where  "GCC_NAME21='Greater Melbourne'"
+  source: Australian Bureau of Statistics
+  publication_date: 2021-07-20
+  url: https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files/GCCSA_2021_AUST_SHP_GDA2020.zip
+  licence: CC-BY-4.0
+  urban_intersection: true
+  citation: "Australian Bureau of Statistics (2021). Greater Capital City Statistical Areas - 2021 - Shapefile. Australian Statistical Geography Standard (ASGS) Edition 3 https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026."
+  notes: Reference period July 2021 - June 2026
+urban_region:
+  name: "ABS ASGS Sections of State 2025"
+  data_dir: AU/SOS_2021_AUST_GDA2020_SHP.zip -where "SOS_NAME21 IN ('Major Urban','Other Urban')"
+  licence: CC BY 4.0
+  citation: "Australian Bureau of Statistics (2021). Section of State - 2021 - Shapefile. Australian Statistical Geography Standard (ASGS) Edition 3 https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026."
+population:
+  name: "Australian population grid 2025 in GeoTIFF format (ABS 2024)"
+  data_dir: AU/Australian_Population_Grid_2025_in_GEOTIFF_format
+  data_type: raster:Int64
+  resolution: 1000m
+  raster_band: 1
+  raster_nodata: -200
+  pop_min_threshold: 1
+  crs_name: GDA94 / Australian Albers
+  crs_standard: EPSG
+  crs_srid: 3577
+  source_url: https://www.abs.gov.au/statistics/people/population/regional-population/2024-25/GEOTIFF.zip
+  year_published: 2026
+  year_target: 2025
+  date_acquired: 20260331
+  licence: CC BY 4.0
+  citation: "Australian Bureau of Statistics. 2026. Regional population: Australian population grid 2025 in GeoTIFF format. https://www.abs.gov.au/statistics/people/population/regional-population/2024-25. Accessed 31 March 2026."
+OpenStreetMap:
+  data_dir: AU/australia-260112.osm.pbf
+  source: Geofabrik GmbH
+  publication_date: 20260112
+  licence: ODbL
+  url: https://download.geofabrik.de/australia-oceania/australia.html
+  note: Australia OpenStreetMap excerpt
+network:
+  #########
+  ## Optional network parameters for use in some contexts (eg. island cities)
+  ## Whether to only retain main connected network when retrieving OSM roads.
+  ## For most settings, set to "false" (the default, used if commented out).
+  ## To retain network 'islands' if present, set to "true".
+  osmnx_retain_all: true
+  ## Whether to extract the network for the buffered study region.
+  ## It is recommended to set to 'true' (the default) in most cases.
+  ## Setting this to false may be appropriate for true islands, but could be
+  ## problematic for anywhere else where the network and associated amenities
+  ## may be accessible beyond the edge of the study region boundary.
+  buffered_region: true
+  #########
+  ## Optionally, data for evaluating intersections can be provided as an
+  ## alternative to deriving intersections from OpenStreetMap.
+  ## Where such data are available, this may be preferable.
+  ## Uncomment and complete the below required fields to use this option.
+  ## Custom intersection data settings
+  intersections:
+    ## path to data relative to the project data directory
+    data: AU/DTP-Vicmap-Transport-Road-Infrastructure-2026-02-14.zip/gda2020_vicgrid/esrishape/user_polygon/user_polygon-1000/VMTRANS/TR_ROAD_INFRASTRUCTURE.shp -where "\"FTYPE_CODE\" IN ('int_nosignal','int_signal','roundabout')"
+    ## citation for optional custom intersection data
+    citation: 'Victorian Department of Transport and Planning. 2026. Vicmap Transport - Road Infrastructure Point. https://datashare.maps.vic.gov.au/search?q=uuid%3D359796da-2caa-5c38-9837-9a67f920675f'
+    ## a note to describe custom intersection data
+    note: "Clean intersection locations from Victoria's official road infrastructure data, last updated 14 February 2026.  Query was manually verified using QGIS."
+country_gdp:
+  classification: High-income
+  citation: "The World Bank. 2026. World Bank country and lending groups: Current classification by income in XLSX format. https://ddh-openapi.worldbank.org/resources/DR0095333/download"
+gtfs_feeds:
+  folder: ../AU/DTP PTV GTFS Feeds - September 2025/gtfs_20251003_180717
+  # Regional Train
+  1/google_transit.zip:
+    gtfs_provider: PTV
+    gtfs_year: 2025
+    gtfs_url: https://opendata.transport.vic.gov.au/dataset/gtfs-schedule
+    start_date_mmdd: 20251006
+    end_date_mmdd: 20251219
+    interpolate_stop_times: false
+  # Metropolitan Train
+  2/google_transit.zip:
+    gtfs_provider: PTV
+    gtfs_year: 2025
+    gtfs_url: https://opendata.transport.vic.gov.au/dataset/gtfs-schedule
+    start_date_mmdd: 20251006
+    end_date_mmdd: 20251219
+    interpolate_stop_times: false
+  # Metropolitan Tram
+  3/google_transit.zip:
+    gtfs_provider: PTV
+    gtfs_year: 2025
+    gtfs_url: https://opendata.transport.vic.gov.au/dataset/gtfs-schedule
+    start_date_mmdd: 20251006
+    end_date_mmdd: 20251219
+    interpolate_stop_times: false
+  # myki Bus (Metropolitan Bus and Regional Town Bus)
+  4/google_transit.zip:
+    gtfs_provider: PTV
+    gtfs_year: 2025
+    gtfs_url: https://opendata.transport.vic.gov.au/dataset/gtfs-schedule
+    start_date_mmdd: 20251006
+    end_date_mmdd: 20251219
+    interpolate_stop_times: false
+  # Regional Coach
+  5/google_transit.zip:
+    gtfs_provider: PTV
+    gtfs_year: 2025
+    gtfs_url: https://opendata.transport.vic.gov.au/dataset/gtfs-schedule
+    start_date_mmdd: 20251006
+    end_date_mmdd: 20251219
+    interpolate_stop_times: false
+  # Regional Bus
+  6/google_transit.zip:
+    gtfs_provider: PTV
+    gtfs_year: 2025
+    gtfs_url: https://opendata.transport.vic.gov.au/dataset/gtfs-schedule
+    start_date_mmdd: 20251006
+    end_date_mmdd: 20251219
+    interpolate_stop_times: false
+  # Interstate and SkyBus (private airport shuttle) services omitted.
+  # Regional train, bus and coach services were included due to their role in connecting peripheral urban areas (e.g. Riddell's creek) to metropolitan centres, and to provide a more complete picture of public transport provision across the study region.
+#########
+## Optional Google Earth Engine indicator configuration
+## Set 'gee' below to true to compute and generate the below indicators, or set false to skip
+## 1. Large Public Urban Green Space (LPUGS) accessibility and availability
+## 2. Global Urban Heat Vulnerability Index (GUHVI)
+gee: true
+policy_review: process/data/AU/Urban policy checklist_1000 Cities Challenge_version 1.0.3_final 17 November 2025_VALIDATED ML CH.xlsx
+#########
+## Reporting configuration
+reporting:
+  ## PDF report templates (note: policy checklist has not been completed for the Wellington example)
+  templates:
+    - policy_spatial_ee
+    - spatial_ee
+    - policy
+  publication_ready: true
+  study_region_context_basemap: 'satellite'
+  custom_text_box_fontsize : 11
+  ## Once ready for publication it is recommended to register a DOI for your
+  ## report, e.g. through figshare, zenodo or other repository.  For example,
+  ## "https://doi.org/10.25439/rmt.c.6012649"
+  doi: ""
+  images:
+    1:
+      # (.jpg, 2100px by 1000px; or equivalent 21:10 aspect ratio)
+      file: "AU/images/SwanstonSt_x_LaTrobeSt_3_landscape_Sonja_Broersen_2026.jpg"
+      description: "Melbourne at junction of Swanston and La Trobe Streets"
+      credit: "Sonja Broersen, 2026"
+    2:
+      # (.jpg, 2100px by 1000px; or equivalent 21:10 aspect ratio)
+      file: "AU/images/Birrarung_7_landscape_Sonja_Broersen_2026.jpg"
+      description: "People walking along the Birrarung (Yarra River) in Melbourne"
+      credit: "Sonja Broersen, 2026"
+    3:
+      # (.jpg, 1000px by 1000px; or equivalent 1:1 aspect ratio)
+      file: "AU/images/AnsteyStation_square_CarlHiggs_2026.jpg"
+      description: "Shared cycle path next to Anstey Station and Nightingale Apartments in Brunswick"
+      credit: "Carl Higgs, 2026"
+    4:
+      # (.jpg, 1000px by 1000px; or equivalent 1:1 aspect ratio)
+      file: "AU/images/Melbourne_CBD_4_square_Sonja_Broersen_2026.jpg"
+      description: "Another cyclist in the Melbourne CBD at junction of Swanston and La Trobe Streets"
+      credit: "Sonja Broersen, 2026"
+  ## Languages configuration
+  languages:
+    ## Add a list of languages as required.
+    ## Languages listed should correspond to columns in the 'languages' worksheet
+    ## of the file process/configuration/_report_configuration.xlsx.
+    ## If the software has not yet been used, the template for this file is
+    ## located in the 'templates' subdirectory.
+    ## Supported languages can also be viewed by running the python command
+    ## ghsci.get_languages().
+    ## New languages can be added, although some may require additional fonts.
+    ## Some languages may not yet be supported (eg. complex scripts like Tamil
+    ## and Thai may not be supported by the report template and require manual
+    ## edits, and right-to-left layouts may not yet be correctly represented).
+    English:
+      ## City name in English, for example: Las Palmas
+      name: "Naarm / Melbourne"
+      ## Country name in English, for example: Spain
+      country: "Australia"
+      ## After reviewing the policy and/or spatial indicator results, update
+      ## the text of the following summary records to contextualise your findings,
+      ## and relate to external text and documents (e.g. using website hyperlinks).
+      ## This text will be used in the respective report summaries.
+      summary_policy: |
+        Naarm / Melbourne had good coverage of urban planning and transport policies that are important for creating healthy and sustainable cities. The policy framework generally promotes healthy, walkable neighbourhoods with urban greening, and nearby access to destinations such as jobs, shops, public transport and open space. However, while most policies aligned with healthy cities evidence, some policies related to walkability, destination access and transport policy to limit air pollution were partly inconsistent with evidence. Melbourne also lacked measurable policy targets for over one third of the policy indicators. The findings highlight the need to strengthen urban and transport policies, ensuring that they align with best-practice evidence and include measurable targets to guide implementation of healthy and sustainable city objectives across all neighbourhoods.
+      summary_spatial: |
+        The spatial analysis found persistent inequities in the delivery of neighbourhoods that support healthy and sustainable lifestyles. The majority of neighbourhoods in Melbourne have low walkability and poor access to fresh food and regularly serviced public transport. The distribution of walkability and public transport access favours inner-city and middle suburban neighbourhoods. Few Melbourne residents live in neighbourhoods that meet population density and street connectivity thresholds to achieve at least 80% probability of engaging in any walking for transport. While 90% of residents have some public open space within 500m, this drops to 66% having access to public open space of 1.5 hectares or larger. However, 71.5% of the population live within 500m of green space of at least 1 hectare in size. Approximately 20% of the city's population live in areas most vulnerable to urban heat, concentrated in the city's north-western and south-eastern suburbs. The findings underscore the need for policy standards and targeted interventions to better support healthy and sustainable living across all neighbourhoods.
+      summary_policy_spatial: |
+        Naarm / Melbourne had good coverage of urban planning and transport policies that are important for creating healthy and sustainable cities. The policy framework generally promotes healthy, walkable neighbourhoods with urban greening, and nearby access to destinations such as jobs, shops, public transport and open space. However, while most policies aligned with healthy cities evidence, some policies related to walkability, destination access and transport policy to limit air pollution were partly inconsistent with evidence. Melbourne also lacked measurable policy targets for over one third of the policy indicators. 
+        The spatial analysis found persistent inequities in the delivery of neighbourhoods that support healthy and sustainable lifestyles. The majority of neighbourhoods in Melbourne have low walkability and poor access to fresh food and regularly serviced public transport. The distribution of walkability and public transport access favours inner-city and middle suburban neighbourhoods. Few Melbourne residents live in neighbourhoods that meet population density and street connectivity thresholds to achieve at least 80% probability of engaging in any walking for transport. While 90% of residents have some public open space within 500m, this drops to 66% having access to public open space of 1.5 hectares or larger. However, 71.5% of the population live within 500m of green space of at least 1 hectare in size. Approximately 20% of the city's population live in areas most vulnerable to urban heat, concentrated in the city's north-western and south-eastern suburbs. The findings highlight the need to strengthen urban and transport policies and interventions, with monitoring to ensure that healthy and sustainable city objectives are consistently delivered across all neighbourhoods.
+
+      ## Contextual summary for study region spatial report.  Users may choose to
+      ## translate these entries (following the hyphen) for languages configured
+      ## for their city.  Remember, if you put a colon (":") in, put quotes
+      ## around the text to make it explicitly understood as text.
+      context:
+        ## A brief summary of region characteristics
+        - City context:
+            ## Contextual information about your study region. Please briefly
+            ## summarise the city location, history and topography, as relevant.
+            - summary: "Naarm / Melbourne is the capital of the state of Victoria, Australia, situated at the head of Port Phillip Bay, centered on the Yarra River (Birrarung). It is located on the traditional lands of the people of the Kulin Nation who have lived there for over 2000 generations. Europeans arrived in 1835, with the inner city grid laid out on the northern side of the Birrarung in 1837. Greater Melbourne has grown to be Australia's second largest city by area, spanning approximately 10,000 km² and housing 5 million people across 31 municipalities."
+            - source: ""
+        - Demographics and health equity:
+            ## For example, highlight socio-economic demographic characteristics
+            ## and key health challenges and inequities present in this urban area.
+            - summary: "Melbourne is a growing, multicultural city. While the established inner city is regarded as highly liveable, many middle and outer neighbourhoods are characterised by car dependence and low-density sprawl. Infrastructure and service provision have lagged amidst rapid outer-suburban expansion, compounding neighbourhood disadvantage in socioeconomically disadvantaged areas. Non-communicable diseases are the largest cause of avoidable death, with risk factors including overweight and obesity, unhealthy diets and physical inactivity."
+            - source: ""
+        - Environmental disaster context:
+            ## For example, environmental hazards likely to be experience by the
+            ## urban area over the next 5-10 years, may include [insert those
+            ## listed as ‘yes’ in the policy checklist].  Completed policy
+            ## checklist values will be added, but prose may be customised here.
+            - summary: "Environmental hazards that may impact the urban area over the coming decade include: severe storms, floods, bushfires/wildfires, heatwaves."
+            - source: "Add any citations used here."
+        - Levels of government:
+            ## For example, for this report, policies from [insert levels of government from policy checklist,  e.g. national, metropolitan, local] levels of government were analysed. Completed policy checklist values will be added, but prose may be customised here.
+            - summary: ""
+            - source: "Add any citations used here."
+        - Additional context:
+            ## The 'Additional context' section is only included in spatial reports, and only if
+            ## information is added in the 'summary' section below.  Detail any other
+            ## considerations relating to urban health inequities and geography in
+            ## this city, or data considerations that could influence interpretation
+            ## of findings.
+            - summary: ""
+            - source: "Add any citations used here."
+  ## Optionally, exceptions to the template can be specified here, this can be
+  ## useful for additional translation customisation without modifying the
+  ## report_configuration.xlsx file.  These phrases can incorporate translated
+  ## phrases defined in report configuration, by enclosing these in curly braces,
+  ## e.g. like {this}, if 'this' has been defined as a phrase in the relevant
+  ## language.  See the example region for a demonstration of how this can be
+  ## used.  Sections from the example can be pasted here and modified as
+  ## required, or the below example can be uncommented.
+  exceptions:
+    "English":
+      'authors': 'City team members: Carl Higgs, Sonja Broersen, Ryan Turner and Melanie Lowe'
+      'policy_authors': 'Broersen S, Higgs C and Lowe M'
+      'spatial_ee_authors': 'Higgs C, Turner R and Lowe M'
+      'policy_spatial_ee_authors': 'Higgs C, Broersen S, Turner R and Lowe M'
+  #########
+  # Optional scorecard context statistics
+  optional_scorecard_context_statistics:
+    ## The scorecard is an optional summary of the policy and spatial indicator results.
+    ## It is prepared by a graphic designer using an additional selection of contextual
+    ## information and indicator results, which a research can provide to the GOHSC team.
+    ## To specify values for these fields, uncomment and complete the required fields for each.
+    ## For values, please only use numbers and decimal points; do not use commas or other punctuation.
+    ## For more information, contact the GOHSC team at info@healthysustainablecities.org
+    Gini:
+      # Country Gini Index as an estimate of income inequality
+      # see https://data.worldbank.org/indicator/SI.POV.GINI
+      value: 33.8
+      year: 2020
+      source: https://data.worldbank.org/indicator/SI.POV.GINI
+      note:
+    HDI:
+      # Country Human Development Index (HDI)
+      # https://hdr.undp.org/data-center/human-development-index#/indicies/HDI
+      value: 0.958
+      year: 2023
+      source: https://hdr.undp.org/data-center/human-development-index#/indicies/HDI
+    GDP per capita:
+      # City Gross Domestic Product (GDP) per capita as an estimate of economic development (international dollar $)
+      value: 64604
+      year: 2024
+      source: https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?locations=AU
+    ## The following data may be optionally uncommented and provided by users using official data.
+    ## This may be preferable to using derived estimates.
+    City area (km²):
+      # Total study region or city area in square kilometres (km²)
+      # The city boundary is the release for 2021-2026, effectively a mid-point for comparison between a 2016 and 2026 analysis
+      # Officially, this boundary is the current one until June 2026 when the next release of official boundaries (2026-2031) will be made
+      value: 9992.6
+      year: 2021
+      source: https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files/GCCSA_2021_AUST_SHP_GDA2020.zip
+    City population:
+      # Total study region or city population
+      value: 5435590
+      # this is an estimate of residential population at 30 June 2025 (published 31 March 2026)
+      year: 2025
+      source: https://www.abs.gov.au/statistics/people/population/regional-population/latest-release
