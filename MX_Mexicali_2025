@@ -30,6 +30,7 @@ exclusion_region:
   citation: 
   notes: Es necesario tener cuidado para garantizar que la zona de estudio delimitada no se extienda más allá de la frontera con Estados Unidos, a fin de evitar incluir la red vial o los servicios fuera de México en los cálculos de accesibilidad // Care must be taken to ensure the buffered study region does not expand across the border with the United States to ensure we do not include road network or amenities outside Mexico in accessibility calculations.  As per https://github.com/healthysustainablecities/global-indicators/issues/610, we have configured the network setup to be restricted to the main study region (not buffered region).
 population:
+  # A contiguous population layer with coverage of the street network is required for sampling
   name: "Mexicali AGEB"
   data_dir: MX/mexicali_AGEB_population.geojson
   data_type: vector
@@ -47,22 +48,24 @@ population:
   licence: CC BY 4.0
   citation:  "INEGI (2026). Principales resultados por AGEB y manzana urbana 2020. https://www.inegi.org.mx/contenidos/programas/ccpv/iter/zip/resageburb20/resageburb_02csv20.zip."
   notes:  Spatial data containing AGEB population estimates were joined to AGEB geometries using official INEGI data.  After filtering to restrict to results for Mexicali, MZA population estimates were aggregated to AGEB areas and then linked to geometries before exporting as a geojson, as detailed in Mexicali_2025.ipynb. 
+  # Optional custom population aggregation layer for reporting and population weighted overal region estimates
+  # Useful where high-resolution non-contiguous data are available at block level
+  # This should correspond to a configured layer in custom_aggregations
+  custom_population:  manzanas
 custom_aggregations:
   manzanas:
     ## path to data relative to project data folder
     data: "MX/mexicali_manzanas_population.geojson"
-    ## The field used as a unique identifier
-    id: MZA
+    ## The field used as a unique identifier; if empty, a new one will be generated as 'ogc_fid'
+    id:
     ## A list of column field names to be retained
-    keep_columns: POBTOT
+    keep_columns: AGEB, MZA, POBTOT
     ## The indicator layer to be aggregated ("point" or "grid")
     ## Aggregation is based on the average of intersecting results
     ## unless the agg_distance parameter is defined (see alternative example below)
     aggregation_source: point
     aggregate_within_distance: 30
-    ## The variable used for weighting.
-    ## Enter 'pop_est' to use the population grid.
-    ## Leave blank or "false" if using sample points.
+    ## We set the weight to POBTOT; this represents the population count
     weight: POBTOT
     notes:  Spatial data containing manzana (MZA) population estimates were joined to MZA geometries using official INEGI data, linking on AGEB and MZA (manzana) as detailed in Mexicali_2025.ipynb.  It is also worth noting that Manzanas are too fine-grained to aggregate meaningfully based on sample points alone; we need to use the 'aggregate_within_distance' argument from custom_aggregations.
 OpenStreetMap:
@@ -91,19 +94,26 @@ gtfs_feeds:
     # start_date_mmdd: 
     # end_date_mmdd: 
     # interpolate_stop_times: 
+# public_open_space:
+  # data:
+  # source:
+  # publication_date:
+  # url:
+  # licence:
+  # citation:
 #########
 ## Optional Google Earth Engine indicator configuration
 ## Set 'gee' below to true to compute and generate the below indicators, or set false to skip
 ## 1. Large Public Urban Green Space (LPUGS) accessibility and availability
 ## 2. Global Urban Heat Vulnerability Index (GUHVI)
-gee: false
+gee: true
 policy_review: 
 #########
 ## Reporting configuration
 reporting:
   ## PDF report templates (note: policy checklist has not been completed for the Wellington example)
   templates:
-    - spatial
+    - spatial_ee
   publication_ready: true
   study_region_context_basemap: 'satellite'
   custom_text_box_fontsize : 11
@@ -145,7 +155,7 @@ reporting:
     ## Some languages may not yet be supported (eg. complex scripts like Tamil
     ## and Thai may not be supported by the report template and require manual
     ## edits, and right-to-left layouts may not yet be correctly represented).
-    Spanish - Mexican:
+    Spanish - Latin America:
       name: "Mexicali"
       country: "Mexico"
       ## After reviewing the policy and/or spatial indicator results, update
